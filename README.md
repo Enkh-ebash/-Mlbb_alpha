@@ -56,10 +56,9 @@ inside the container (or locally against DATABASE_URL) to create the tables.
    It fetches the player's current elo from auth-service and stores them in the queue.
 3. Every 5s, matchmaking-service's background job pairs waiting players whose MMR
    is within an expanding window and assigns them a shared `matchId`.
-4. Someone (currently: any authenticated caller — a proper trigger from
-   matchmaking-service is the next integration step) calls
-   `POST /matches` on **match-service** with `{ matchId, playerAId, playerBId }`
-   to create the actual match record.
+4. When matchmaking-service pairs two players, it automatically calls
+   `POST /internal/matches` on **match-service** with
+   `{ matchId, playerAId, playerBId }` to create the real match record.
 5. A player calls `PATCH /matches/:id/room-code` once they've made a custom room in MLBB.
 6. After the game, a player calls `POST /matches/:id/result` with the winner + optional
    per-player K/D/A stats.
@@ -73,14 +72,15 @@ inside the container (or locally against DATABASE_URL) to create the tables.
 
 ## Known gaps / next steps
 
-- matchmaking-service finding a pair doesn't yet automatically call
-  `POST /matches` on match-service — that hand-off needs to be wired in
-  `matching.job.ts`.
 - The performance multiplier in elo-service uses flat KDA weights, not the
   per-position weights from the design doc (Gold/Jungle/Mid/Exp/Roam), because
   hero → position data isn't wired in from hero-service yet.
-- `/internal/*` routes (auth-service, elo-service) have no service-to-service
-  auth — fine on the Docker internal network for now, but should get a shared
-  API key before this goes anywhere near the public internet.
+- `/internal/*` routes (auth-service, elo-service, match-service) have no
+  service-to-service auth — fine on the Docker internal network for now, but
+  should get a shared API key before this goes anywhere near the public internet.
+- If match-service is briefly unreachable when matchmaking-service finds a
+  pair, the queue entries stay `MATCHED` with a `matchId` but no match record
+  gets created — no automatic retry yet, so a moderator would need to create
+  it manually via `POST /matches`.
 - team-service, tournament-service, news-service, notification-service, and
   hero-service's sync job are still skeletons — see the "Services" table above.

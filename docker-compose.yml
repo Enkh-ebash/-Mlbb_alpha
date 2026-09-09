@@ -56,12 +56,15 @@ services:
       REDIS_URL: redis://redis:6379
       JWT_SECRET: dev_secret_change_me
       AUTH_SERVICE_URL: http://auth-service:4001
+      MATCH_SERVICE_URL: http://match-service:4004
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
       auth-service:
+        condition: service_started
+      match-service:
         condition: service_started
 
   elo-service:

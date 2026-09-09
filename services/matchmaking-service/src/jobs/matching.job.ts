@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import { prisma } from "../config/db";
+import { createMatchOnMatchService } from "../services/match-client";
 
 const TICK_MS = 5_000;
 const BASE_WINDOW = 50; // ± MMR at queue time
@@ -59,6 +60,19 @@ async function runMatchingTick() {
       console.log(
         `matchmaking: paired ${a.userId} (mmr ${a.mmr}) with ${bestMatch.userId} (mmr ${bestMatch.mmr}), diff ${bestDiff}, matchId ${matchId}`
       );
+
+      try {
+        await createMatchOnMatchService({
+          matchId,
+          playerAId: a.userId,
+          playerBId: bestMatch.userId,
+        });
+      } catch (err) {
+        // The queue entries stay MATCHED with this matchId even if match-service
+        // is briefly unreachable — a moderator/admin can create the match record
+        // manually via match-service's own POST /matches as a fallback.
+        console.error(`matchmaking: failed to create match ${matchId} on match-service:`, err);
+      }
     }
   }
 }
