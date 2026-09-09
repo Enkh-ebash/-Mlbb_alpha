@@ -1,0 +1,166 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: mlbb
+      POSTGRES_PASSWORD: mlbb_dev_password
+      POSTGRES_DB: mlbb_play
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mlbb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  auth-service:
+    build: ./services/auth-service
+    restart: unless-stopped
+    ports:
+      - "4001:4001"
+    environment:
+      PORT: 4001
+      DATABASE_URL: postgresql://mlbb:mlbb_dev_password@postgres:5432/mlbb_play?schema=auth
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev_secret_change_me
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  matchmaking-service:
+    build: ./services/matchmaking-service
+    restart: unless-stopped
+    ports:
+      - "4002:4002"
+    environment:
+      PORT: 4002
+      DATABASE_URL: postgresql://mlbb:mlbb_dev_password@postgres:5432/mlbb_play?schema=matchmaking
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  elo-service:
+    build: ./services/elo-service
+    restart: unless-stopped
+    ports:
+      - "4003:4003"
+    environment:
+      PORT: 4003
+      DATABASE_URL: postgresql://mlbb:mlbb_dev_password@postgres:5432/mlbb_play?schema=elo
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  match-service:
+    build: ./services/match-service
+    restart: unless-stopped
+    ports:
+      - "4004:4004"
+    environment:
+      PORT: 4004
+      DATABASE_URL: postgresql://mlbb:mlbb_dev_password@postgres:5432/mlbb_play?schema=match
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  hero-service:
+    build: ./services/hero-service
+    restart: unless-stopped
+    ports:
+      - "4005:4005"
+    environment:
+      PORT: 4005
+      DATABASE_URL: postgresql://mlbb:mlbb_dev_password@postgres:5432/mlbb_play?schema=hero
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  team-service:
+    build: ./services/team-service
+    restart: unless-stopped
+    ports:
+      - "4006:4006"
+    environment:
+      PORT: 4006
+      DATABASE_URL: postgresql://mlbb:mlbb_dev_password@postgres:5432/mlbb_play?schema=team
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  tournament-service:
+    build: ./services/tournament-service
+    restart: unless-stopped
+    ports:
+      - "4007:4007"
+    environment:
+      PORT: 4007
+      DATABASE_URL: postgresql://mlbb:mlbb_dev_password@postgres:5432/mlbb_play?schema=tournament
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  news-service:
+    build: ./services/news-service
+    restart: unless-stopped
+    ports:
+      - "4008:4008"
+    environment:
+      PORT: 4008
+      DATABASE_URL: postgresql://mlbb:mlbb_dev_password@postgres:5432/mlbb_play?schema=news
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  notification-service:
+    build: ./services/notification-service
+    restart: unless-stopped
+    ports:
+      - "4009:4009"
+    environment:
+      PORT: 4009
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  pgdata:

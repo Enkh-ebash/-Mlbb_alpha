@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PLAYER
+  MODERATOR
+  ADMIN
+}
+
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(PLAYER)
+  avatarUrl    String?
+  eloRating    Int      @default(1000)
+  createdAt    DateTime @default(now())
+
+  mlbbProfile  MlbbProfile?
+
+  @@map("users")
+}
+
+model MlbbProfile {
+  id             String    @id @default(uuid())
+  userId         String    @unique
+  user           User      @relation(fields: [userId], references: [id])
+  mlbbId         String
+  zoneId         String
+  inGameName     String
+  cachedRank     String?
+  cachedWinrate  Float?
+  lastSyncedAt   DateTime?
+
+  @@map("mlbb_profiles")
+}
