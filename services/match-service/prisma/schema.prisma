@@ -1,0 +1,87 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MatchType {
+  SOLO_1V1
+  TEAM_5V5
+}
+
+enum MatchStatus {
+  PENDING
+  ONGOING
+  COMPLETED
+  DISPUTED
+  CANCELLED
+}
+
+enum ResultStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Match {
+  id        String      @id @default(uuid())
+  matchType MatchType   @default(SOLO_1V1)
+  playerAId String
+  playerBId String
+  roomCode  String?
+  status    MatchStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+
+  result MatchResult?
+  stats  MatchPlayerStat[]
+
+  @@map("matches")
+}
+
+model MatchResult {
+  id            String       @id @default(uuid())
+  matchId       String       @unique
+  match         Match        @relation(fields: [matchId], references: [id])
+  winnerId      String
+  scoreA        Int?
+  scoreB        Int?
+  screenshotUrl String?
+  submittedBy   String
+  status        ResultStatus @default(PENDING)
+  submittedAt   DateTime     @default(now())
+
+  review ModeratorReview?
+
+  @@map("match_results")
+}
+
+model ModeratorReview {
+  id            String       @id @default(uuid())
+  matchResultId String       @unique
+  matchResult   MatchResult  @relation(fields: [matchResultId], references: [id])
+  moderatorId   String
+  decision      ResultStatus
+  notes         String?
+  reviewedAt    DateTime     @default(now())
+
+  @@map("moderator_reviews")
+}
+
+model MatchPlayerStat {
+  id        String   @id @default(uuid())
+  matchId   String
+  match     Match    @relation(fields: [matchId], references: [id])
+  userId    String
+  kills     Int      @default(0)
+  deaths    Int      @default(0)
+  assists   Int      @default(0)
+  isMvp     Boolean  @default(false)
+  heroId    String?
+  createdAt DateTime @default(now())
+
+  @@map("match_player_stats")
+}

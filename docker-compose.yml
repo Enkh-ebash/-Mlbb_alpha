@@ -54,11 +54,15 @@ services:
       PORT: 4002
       DATABASE_URL: postgresql://mlbb:mlbb_dev_password@postgres:5432/mlbb_play?schema=matchmaking
       REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev_secret_change_me
+      AUTH_SERVICE_URL: http://auth-service:4001
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
+      auth-service:
+        condition: service_started
 
   elo-service:
     build: ./services/elo-service
@@ -69,11 +73,14 @@ services:
       PORT: 4003
       DATABASE_URL: postgresql://mlbb:mlbb_dev_password@postgres:5432/mlbb_play?schema=elo
       REDIS_URL: redis://redis:6379
+      AUTH_SERVICE_URL: http://auth-service:4001
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
+      auth-service:
+        condition: service_started
 
   match-service:
     build: ./services/match-service
@@ -84,11 +91,16 @@ services:
       PORT: 4004
       DATABASE_URL: postgresql://mlbb:mlbb_dev_password@postgres:5432/mlbb_play?schema=match
       REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev_secret_change_me
+      AUTH_SERVICE_URL: http://auth-service:4001
+      ELO_SERVICE_URL: http://elo-service:4003
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
+      auth-service:
+        condition: service_started
 
   hero-service:
     build: ./services/hero-service

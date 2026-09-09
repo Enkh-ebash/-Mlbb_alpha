@@ -1,0 +1,35 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model EloHistory {
+  id        String   @id @default(uuid())
+  userId    String
+  matchId   String
+  eloBefore Int
+  eloAfter  Int
+  delta     Int
+  createdAt DateTime @default(now())
+
+  @@map("elo_history")
+}
+
+// Rolling average "weighted KDA score" used to judge whether a player's
+// performance in a given match was above or below normal. One row per
+// position once hero-service can tell us positions; for now everything
+// shares the "global" key.
+model PerformanceBaseline {
+  id               String   @id @default(uuid())
+  key              String   @unique
+  avgWeightedScore Float    @default(5.0)
+  sampleSize       Int      @default(0)
+  updatedAt        DateTime @updatedAt
+
+  @@map("performance_baselines")
+}

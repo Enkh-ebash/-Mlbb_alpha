@@ -1,0 +1,28 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum QueueStatus {
+  SEARCHING
+  MATCHED
+  CANCELLED
+}
+
+model QueueEntry {
+  id          String      @id @default(uuid())
+  userId      String
+  mmr         Int
+  status      QueueStatus @default(SEARCHING)
+  queuedAt    DateTime    @default(now())
+  matchedWith String?
+  matchId     String?
+  matchedAt   DateTime?
+
+  @@map("queue_entries")
+}
