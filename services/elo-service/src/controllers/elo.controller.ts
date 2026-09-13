@@ -87,6 +87,12 @@ export async function applyResult(req: Request, res: Response) {
   const statByUser = new Map((stats ?? []).map((s) => [s.userId, s]));
 
   try {
+    // Ensure the baseline row exists BEFORE the two applyForPlayer calls run
+    // concurrently below — otherwise both can race to INSERT the same "global"
+    // key at once, and Postgres rejects the loser with a unique constraint
+    // error (P2002), silently dropping that player's Elo update.
+    await getBaseline();
+
     const [resultA, resultB] = await Promise.all([
       applyForPlayer({
         userId: playerAId,
