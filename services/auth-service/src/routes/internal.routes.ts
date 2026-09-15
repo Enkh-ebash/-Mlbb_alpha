@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getUserElo, setUserElo } from "../controllers/internal.controller";
+import { getUserElo, setUserElo, getUsersCount } from "../controllers/internal.controller";
 
 // NOTE: these routes are meant to be reachable only from other services on the
 // Docker internal network (no public port should ever expose them directly in
@@ -9,3 +9,4 @@ export const internalRouter = Router();
 
 internalRouter.get("/users/:id", getUserElo);
 internalRouter.patch("/users/:id/elo", setUserElo);
+internalRouter.get("/stats/users-count", getUsersCount);

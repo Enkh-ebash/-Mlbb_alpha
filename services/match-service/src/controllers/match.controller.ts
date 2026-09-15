@@ -172,3 +172,47 @@ export async function reviewResult(req: AuthedRequest, res: Response) {
 
   return res.json(review);
 }
+
+export async function getUserStats(req: AuthedRequest, res: Response) {
+  const { id } = req.params;
+
+  const completedMatches = await prisma.match.findMany({
+    where: {
+      OR: [{ playerAId: id }, { playerBId: id }],
+      result: { status: "APPROVED" },
+    },
+    include: { result: true },
+  });
+
+  const matchesPlayed = completedMatches.length;
+  const wins = completedMatches.filter(
+    (m: (typeof completedMatches)[number]) => m.result?.winnerId === id
+  ).length;
+  const winRate = matchesPlayed > 0 ? wins / matchesPlayed : 0;
+
+  const statAggregate = await prisma.matchPlayerStat.aggregate({
+    where: { userId: id },
+    _avg: { kills: true, deaths: true, assists: true },
+    _count: { _all: true },
+  });
+
+  const mvpCount = await prisma.matchPlayerStat.count({ where: { userId: id, isMvp: true } });
+  const statsCount = statAggregate._count._all;
+
+  return res.json({
+    userId: id,
+    matchesPlayed,
+    wins,
+    losses: matchesPlayed - wins,
+    winRate: Math.round(winRate * 1000) / 1000,
+    avgKills: Math.round((statAggregate._avg.kills ?? 0) * 10) / 10,
+    avgDeaths: Math.round((statAggregate._avg.deaths ?? 0) * 10) / 10,
+    avgAssists: Math.round((statAggregate._avg.assists ?? 0) * 10) / 10,
+    mvpRate: statsCount > 0 ? Math.round((mvpCount / statsCount) * 1000) / 1000 : 0,
+  });
+}
+
+export async function getMatchesCount(_req: AuthedRequest, res: Response) {
+  const count = await prisma.match.count({ where: { result: { status: "APPROVED" } } });
+  return res.json({ count });
+}

@@ -21,3 +21,8 @@ export async function setUserElo(req: Request, res: Response) {
   });
   return res.json({ id: user.id, eloRating: user.eloRating });
 }
+
+export async function getUsersCount(_req: Request, res: Response) {
+  const count = await prisma.user.count();
+  return res.json({ count });
+}

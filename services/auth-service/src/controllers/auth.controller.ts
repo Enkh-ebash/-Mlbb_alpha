@@ -106,3 +106,23 @@ export async function linkMlbbProfile(req: AuthedRequest, res: Response) {
 
   return res.json(profile);
 }
+
+export async function getLeaderboard(req: AuthedRequest, res: Response) {
+  const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 50));
+
+  const users = await prisma.user.findMany({
+    orderBy: { eloRating: "desc" },
+    take: limit,
+    select: { id: true, username: true, eloRating: true, avatarUrl: true },
+  });
+
+  return res.json(
+    users.map((u: (typeof users)[number], index: number) => ({
+      rank: index + 1,
+      id: u.id,
+      username: u.username,
+      eloRating: u.eloRating,
+      avatarUrl: u.avatarUrl,
+    }))
+  );
+}
