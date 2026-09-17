@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { href: "/tournaments", label: "Tournaments" },
   { href: "/clans", label: "Clans" },
   { href: "/heroes", label: "Heroes" },
+  { href: "/profile", label: "Profile" },
 ];
 
 export function NavBar() {

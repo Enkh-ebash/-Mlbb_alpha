@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth-context";
 import { NavBar } from "@/components/NavBar";
 import { StatCard } from "@/components/StatCard";
 import { Button } from "@/components/Button";
+import { LevelBadge } from "@/components/LevelBadge";
 
 export default function DashboardPage() {
   const { token, user, loading } = useAuth();
@@ -29,7 +30,10 @@ export default function DashboardPage() {
       <NavBar />
       <main className="mx-auto max-w-6xl px-6 py-10">
         <p className="text-text-secondary">Тавтай морил</p>
-        <h1 className="font-display text-3xl font-bold text-text-primary">{user.username}</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="font-display text-3xl font-bold text-text-primary">{user.username}</h1>
+          <LevelBadge mmr={user.eloRating} />
+        </div>
 
         <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
           <StatCard label="Elo Rating" value={user.eloRating} accent="primary" />

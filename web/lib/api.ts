@@ -87,5 +87,23 @@ export const api = {
         roomCode: string | null;
         status: string;
       }>(`${API_HOSTS.match}/matches/${matchId}`, { headers: authHeader(token) }),
+    userStats: (userId: string) =>
+      request<{
+        userId: string;
+        matchesPlayed: number;
+        wins: number;
+        losses: number;
+        winRate: number;
+        avgKills: number;
+        avgDeaths: number;
+        avgAssists: number;
+        mvpRate: number;
+      }>(`${API_HOSTS.match}/matches/stats/user/${userId}`),
+  },
+  leaderboard: {
+    top: (limit = 50) =>
+      request<
+        { rank: number; id: string; username: string; eloRating: number; avatarUrl: string | null }[]
+      >(`${API_HOSTS.auth}/auth/leaderboard?limit=${limit}`),
   },
 };
