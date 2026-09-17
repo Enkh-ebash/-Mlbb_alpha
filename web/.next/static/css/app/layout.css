@@ -753,26 +753,44 @@ video {
 .flex {
   display: flex;
 }
+.table {
+  display: table;
+}
 .grid {
   display: grid;
 }
 .hidden {
   display: none;
 }
+.h-14 {
+  height: 3.5rem;
+}
 .h-16 {
   height: 4rem;
+}
+.h-8 {
+  height: 2rem;
 }
 .min-h-screen {
   min-height: 100vh;
 }
+.w-14 {
+  width: 3.5rem;
+}
 .w-16 {
   width: 4rem;
+}
+.w-8 {
+  width: 2rem;
 }
 .w-full {
   width: 100%;
 }
 .max-w-2xl {
   max-width: 42rem;
+}
+.max-w-4xl {
+  max-width: 56rem;
 }
 .max-w-6xl {
   max-width: 72rem;
@@ -824,6 +842,9 @@ video {
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1rem * var(--tw-space-y-reverse));
 }
+.overflow-hidden {
+  overflow: hidden;
+}
 .rounded-2xl {
   border-radius: 1rem;
 }
@@ -872,6 +893,9 @@ video {
 }
 .border-white\/15 {
   border-color: rgb(255 255 255 / 0.15);
+}
+.border-white\/5 {
+  border-color: rgb(255 255 255 / 0.05);
 }
 .border-t-transparent {
   border-top-color: transparent;
@@ -967,11 +991,18 @@ video {
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
 .text-left {
   text-align: left;
 }
 .text-center {
   text-align: center;
+}
+.text-right {
+  text-align: right;
 }
 .font-body {
   font-family: var(--font-inter);
@@ -1012,6 +1043,9 @@ video {
 .font-medium {
   font-weight: 500;
 }
+.font-normal {
+  font-weight: 400;
+}
 .font-semibold {
   font-weight: 600;
 }
@@ -1020,6 +1054,10 @@ video {
 }
 .tracking-wide {
   letter-spacing: 0.025em;
+}
+.text-bg {
+  --tw-text-opacity: 1;
+  color: rgb(18 18 31 / var(--tw-text-opacity));
 }
 .text-coral {
   --tw-text-opacity: 1;
@@ -1087,6 +1125,10 @@ body {
   color: rgb(160 160 192 / 0.6);
 }
 
+.last\:border-0:last-child {
+  border-width: 0px;
+}
+
 .hover\:border-coral:hover {
   --tw-border-opacity: 1;
   border-color: rgb(255 107 107 / var(--tw-border-opacity));
@@ -1142,6 +1184,10 @@ body {
 
   .sm\:inline {
     display: inline;
+  }
+
+  .sm\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .sm\:grid-cols-4 {
