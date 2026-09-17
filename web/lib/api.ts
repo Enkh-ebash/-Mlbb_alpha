@@ -87,6 +87,17 @@ export const api = {
         roomCode: string | null;
         status: string;
       }>(`${API_HOSTS.match}/matches/${matchId}`, { headers: authHeader(token) }),
+    setRoomCode: (token: string, matchId: string, roomCode: string) =>
+      request<{ id: string; roomCode: string; status: string }>(
+        `${API_HOSTS.match}/matches/${matchId}/room-code`,
+        { method: "PATCH", headers: authHeader(token), body: JSON.stringify({ roomCode }) }
+      ),
+    submitResult: (token: string, matchId: string, winnerId: string) =>
+      request<{ id: string; status: string }>(`${API_HOSTS.match}/matches/${matchId}/result`, {
+        method: "POST",
+        headers: authHeader(token),
+        body: JSON.stringify({ winnerId }),
+      }),
     userStats: (userId: string) =>
       request<{
         userId: string;
@@ -105,5 +116,9 @@ export const api = {
       request<
         { rank: number; id: string; username: string; eloRating: number; avatarUrl: string | null }[]
       >(`${API_HOSTS.auth}/auth/leaderboard?limit=${limit}`),
+  },
+  stats: {
+    usersCount: () => request<{ count: number }>(`${API_HOSTS.auth}/internal/stats/users-count`),
+    matchesCount: () => request<{ count: number }>(`${API_HOSTS.match}/matches/stats/count`),
   },
 };

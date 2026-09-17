@@ -173,9 +173,13 @@ services:
     environment:
       PORT: 4009
       REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev_secret_change_me
+      MATCH_SERVICE_URL: http://match-service:4004
     depends_on:
       redis:
         condition: service_healthy
+      match-service:
+        condition: service_started
 
 volumes:
   pgdata:
