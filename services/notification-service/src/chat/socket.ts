@@ -7,10 +7,14 @@ const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_me";
 
 // Chat is only open for this long after a match is created — long enough to
 // swap the MLBB room code and coordinate, not meant to be a persistent chat.
-const CHAT_WINDOW_MS = 20 * 60 * 1000;
+const CHAT_WINDOW_MS = 40 * 60 * 1000;
 const CHAT_WINDOW_SECONDS = CHAT_WINDOW_MS / 1000;
 const MAX_HISTORY = 100;
 const MAX_MESSAGE_LENGTH = 500;
+
+// Once the match reaches one of these, both players have reported a result
+// (agreeing or not) and the lobby is considered closed — chat stops too.
+const CLOSED_STATUSES = ["COMPLETED", "DISPUTED", "CANCELLED"];
 
 interface AuthedSocket extends Socket {
   userId?: string;
@@ -55,6 +59,11 @@ export function attachChat(io: Server) {
 
       if (match.playerAId !== socket.userId && match.playerBId !== socket.userId) {
         socket.emit("chat_error", "Та энэ тоглолтод оролцоогүй байна.");
+        return;
+      }
+
+      if (CLOSED_STATUSES.includes(match.status)) {
+        socket.emit("chat_error", "Лобби хаагдсан байна — үр дүн бүрдсэн.");
         return;
       }
 

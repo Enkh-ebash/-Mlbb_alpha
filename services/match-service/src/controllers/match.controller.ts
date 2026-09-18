@@ -50,71 +50,102 @@ export async function setRoomCode(req: AuthedRequest, res: Response) {
   return res.json(match);
 }
 
-interface StatInput {
-  userId: string;
+interface SubmitResultBody {
+  winnerId: string;
   kills?: number;
   deaths?: number;
   assists?: number;
   isMvp?: boolean;
-  heroId?: string;
 }
+
+const CLOSED_STATUSES = ["COMPLETED", "DISPUTED", "CANCELLED"];
 
 export async function submitResult(req: AuthedRequest, res: Response) {
   const { id } = req.params;
-  const { winnerId, scoreA, scoreB, screenshotUrl, stats } = req.body as {
-    winnerId: string;
-    scoreA?: number;
-    scoreB?: number;
-    screenshotUrl?: string;
-    stats?: StatInput[];
-  };
+  const { winnerId, kills, deaths, assists, isMvp } = req.body as SubmitResultBody;
+  const userId = req.userId!;
 
   if (!winnerId) return res.status(400).json({ error: "winnerId is required" });
 
-  const match = await prisma.match.findUnique({ where: { id }, include: { result: true } });
+  const match = await prisma.match.findUnique({ where: { id } });
   if (!match) return res.status(404).json({ error: "Match not found" });
 
-  if (match.result) {
-    // A result already exists. If the new submission disagrees, flag as disputed
-    // instead of silently overwriting — a moderator needs to look at it.
-    if (match.result.winnerId !== winnerId) {
-      await prisma.match.update({ where: { id }, data: { status: "DISPUTED" } });
-      return res.status(409).json({
-        error: "Conflicting result already submitted — match marked as disputed for moderator review",
-      });
-    }
-    return res.status(409).json({ error: "Result already submitted for this match" });
+  if (userId !== match.playerAId && userId !== match.playerBId) {
+    return res.status(403).json({ error: "You are not a participant in this match" });
   }
 
-  const result = await prisma.matchResult.create({
-    data: {
-      matchId: id,
-      winnerId,
-      scoreA,
-      scoreB,
-      screenshotUrl,
-      submittedBy: req.userId!,
-      status: "PENDING",
-    },
+  if (CLOSED_STATUSES.includes(match.status)) {
+    return res.status(409).json({ error: "Лобби хаагдсан — энэ тоглолтын үр дүн аль хэдийн бүрдсэн." });
+  }
+
+  await prisma.matchResultVote.upsert({
+    where: { matchId_userId: { matchId: id, userId } },
+    update: { winnerId, kills, deaths, assists, isMvp },
+    create: { matchId: id, userId, winnerId, kills, deaths, assists, isMvp },
   });
 
-  if (stats && stats.length > 0) {
-    await prisma.matchPlayerStat.createMany({
-      data: stats.map((s) => ({
-        matchId: id,
-        userId: s.userId,
-        kills: s.kills ?? 0,
-        deaths: s.deaths ?? 0,
-        assists: s.assists ?? 0,
-        isMvp: s.isMvp ?? false,
-        heroId: s.heroId,
-      })),
-    });
+  const votes = await prisma.matchResultVote.findMany({ where: { matchId: id } });
+
+  if (votes.length < 2) {
+    return res.status(200).json({ status: "WAITING_FOR_OPPONENT" });
   }
 
-  await prisma.match.update({ where: { id }, data: { status: "COMPLETED" } });
+  // Both players have now reported — the lobby closes from here regardless
+  // of whether they agree.
+  const [v1, v2] = votes;
+  const agree = v1.winnerId === v2.winnerId;
 
-  return res.status(201).json(result);
+  if (agree) {
+    const finalWinnerId = v1.winnerId;
+
+    await prisma.matchPlayerStat.createMany({
+      data: votes.map((v: (typeof votes)[number]) => ({
+        matchId: id,
+        userId: v.userId,
+        kills: v.kills ?? 0,
+        deaths: v.deaths ?? 0,
+        assists: v.assists ?? 0,
+        isMvp: v.isMvp ?? false,
+      })),
+      skipDuplicates: true,
+    });
+
+    const result = await prisma.matchResult.upsert({
+      where: { matchId: id },
+      update: { winnerId: finalWinnerId, status: "APPROVED", submittedBy: userId },
+      create: { matchId: id, winnerId: finalWinnerId, status: "APPROVED", submittedBy: userId },
+    });
+
+    await prisma.match.update({ where: { id }, data: { status: "COMPLETED" } });
+
+    const stats = await prisma.matchPlayerStat.findMany({ where: { matchId: id } });
+    await notifyEloService({
+      matchId: id,
+      matchType: match.matchType,
+      winnerId: finalWinnerId,
+      playerAId: match.playerAId,
+      playerBId: match.playerBId,
+      stats: stats.map((s: (typeof stats)[number]) => ({
+        userId: s.userId,
+        kills: s.kills,
+        deaths: s.deaths,
+        assists: s.assists,
+        isMvp: s.isMvp,
+      })),
+    });
+
+    return res.status(200).json({ status: "APPROVED", winnerId: finalWinnerId, resultId: result.id });
+  }
+
+  // Disagreement — flag for a moderator, no auto Elo update.
+  const result = await prisma.matchResult.upsert({
+    where: { matchId: id },
+    update: { status: "PENDING" },
+    create: { matchId: id, winnerId: v1.winnerId, status: "PENDING", submittedBy: userId },
+  });
+  await prisma.match.update({ where: { id }, data: { status: "DISPUTED" } });
+
+  return res.status(200).json({ status: "DISPUTED", resultId: result.id });
 }
 
 export async function listPendingResults(_req: AuthedRequest, res: Response) {

@@ -38,8 +38,25 @@ model Match {
 
   result MatchResult?
   stats  MatchPlayerStat[]
+  votes  MatchResultVote[]
 
   @@map("matches")
+}
+
+model MatchResultVote {
+  id        String   @id @default(uuid())
+  matchId   String
+  match     Match    @relation(fields: [matchId], references: [id])
+  userId    String
+  winnerId  String
+  kills     Int?
+  deaths    Int?
+  assists   Int?
+  isMvp     Boolean?
+  createdAt DateTime @default(now())
+
+  @@unique([matchId, userId])
+  @@map("match_result_votes")
 }
 
 model MatchResult {

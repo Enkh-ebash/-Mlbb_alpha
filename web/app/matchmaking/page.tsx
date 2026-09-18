@@ -9,6 +9,7 @@ import { Button } from "@/components/Button";
 import { ChatPanel } from "@/components/ChatPanel";
 
 type QueueState = "IDLE" | "SEARCHING" | "MATCHED";
+type ResultState = "NONE" | "WAITING_FOR_OPPONENT" | "APPROVED" | "DISPUTED";
 
 interface MatchInfo {
   id: string;
@@ -32,7 +33,7 @@ export default function MatchmakingPage() {
   const [savingRoomCode, setSavingRoomCode] = useState(false);
   const [roomCodeError, setRoomCodeError] = useState<string | null>(null);
 
-  const [resultSubmitted, setResultSubmitted] = useState(false);
+  const [resultState, setResultState] = useState<ResultState>("NONE");
   const [submittingResult, setSubmittingResult] = useState(false);
   const [resultError, setResultError] = useState<string | null>(null);
 
@@ -110,18 +111,18 @@ export default function MatchmakingPage() {
     setResultError(null);
     try {
       const winnerId = won ? user.id : match.opponentId;
-      await api.match.submitResult(token, match.id, winnerId);
-      setResultSubmitted(true);
+      const res = await api.match.submitResult(token, match.id, { winnerId });
+      setResultState(res.status);
     } catch (err) {
       setResultError(
-        err instanceof ApiError
-          ? "Илгээхэд алдаа гарлаа — үр дүн аль хэдийн илгээгдсэн байж магадгүй."
-          : "Сервертэй холбогдож чадсангүй."
+        err instanceof ApiError ? err.message : "Сервертэй холбогдож чадсангүй."
       );
     } finally {
       setSubmittingResult(false);
     }
   }
+
+  const lobbyClosed = resultState === "APPROVED" || resultState === "DISPUTED";
 
   return (
     <div className="min-h-screen bg-bg">
@@ -186,14 +187,12 @@ export default function MatchmakingPage() {
 
             <div className="mt-6 rounded-2xl border border-white/10 bg-surface p-6 text-left">
               <h3 className="font-display text-sm font-bold text-text-primary">Тоглолт дууссан уу?</h3>
-              {resultSubmitted ? (
-                <p className="mt-2 text-sm text-teal">
-                  Илгээгдлээ — moderator баталгаажуулахыг хүлээж байна.
-                </p>
-              ) : (
+
+              {resultState === "NONE" && (
                 <>
                   <p className="mt-1 text-sm text-text-secondary">
-                    Тоглолт дуусмагц хэн хожсоноо тэмдэглээрэй.
+                    Тоглолт дуусмагц хэн хожсоноо тэмдэглээрэй. Хоёр тал тохирвол автоматаар
+                    баталгаажина.
                   </p>
                   <div className="mt-4 flex gap-3">
                     <button
@@ -211,12 +210,32 @@ export default function MatchmakingPage() {
                       Би хожигдлоо
                     </button>
                   </div>
-                  {resultError && <p className="mt-3 text-sm text-coral">{resultError}</p>}
                 </>
               )}
+
+              {resultState === "WAITING_FOR_OPPONENT" && (
+                <p className="mt-2 text-sm text-text-secondary">
+                  Илгээгдлээ — өрсөлдөгчийн тэмдэглэхийг хүлээж байна…
+                </p>
+              )}
+
+              {resultState === "APPROVED" && (
+                <p className="mt-2 text-sm text-teal">
+                  Хоёулаа тохирсон тул автоматаар баталгаажлаа — Elo шинэчлэгдлээ. Лобби хаагдлаа.
+                </p>
+              )}
+
+              {resultState === "DISPUTED" && (
+                <p className="mt-2 text-sm text-coral">
+                  Хоёр талын мэдээлэл зөрчилдлөө — moderator шалгах хүртэл хүлээнэ үү. Лобби
+                  хаагдлаа.
+                </p>
+              )}
+
+              {resultError && <p className="mt-3 text-sm text-coral">{resultError}</p>}
             </div>
 
-            <ChatPanel token={token} matchId={match.id} selfUserId={user.id} />
+            {!lobbyClosed && <ChatPanel token={token} matchId={match.id} selfUserId={user.id} />}
           </div>
         )}
 

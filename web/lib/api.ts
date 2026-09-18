@@ -92,11 +92,19 @@ export const api = {
         `${API_HOSTS.match}/matches/${matchId}/room-code`,
         { method: "PATCH", headers: authHeader(token), body: JSON.stringify({ roomCode }) }
       ),
-    submitResult: (token: string, matchId: string, winnerId: string) =>
-      request<{ id: string; status: string }>(`${API_HOSTS.match}/matches/${matchId}/result`, {
+    submitResult: (
+      token: string,
+      matchId: string,
+      body: { winnerId: string; kills?: number; deaths?: number; assists?: number; isMvp?: boolean }
+    ) =>
+      request<
+        | { status: "WAITING_FOR_OPPONENT" }
+        | { status: "APPROVED"; winnerId: string; resultId: string }
+        | { status: "DISPUTED"; resultId: string }
+      >(`${API_HOSTS.match}/matches/${matchId}/result`, {
         method: "POST",
         headers: authHeader(token),
-        body: JSON.stringify({ winnerId }),
+        body: JSON.stringify(body),
       }),
     userStats: (userId: string) =>
       request<{
