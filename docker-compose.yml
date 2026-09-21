@@ -114,6 +114,7 @@ services:
       PORT: 4005
       DATABASE_URL: postgresql://mlbb:mlbb_dev_password@postgres:5432/mlbb_play?schema=hero
       REDIS_URL: redis://redis:6379
+      HERO_API_BASE_URL: https://arena.rone.dev/api
     depends_on:
       postgres:
         condition: service_healthy
@@ -129,6 +130,7 @@ services:
       PORT: 4006
       DATABASE_URL: postgresql://mlbb:mlbb_dev_password@postgres:5432/mlbb_play?schema=team
       REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev_secret_change_me
     depends_on:
       postgres:
         condition: service_healthy

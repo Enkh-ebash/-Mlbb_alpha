@@ -1,10 +1,9 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import { heroRouter } from "./routes/hero.routes";
+import { startHeroSyncJob } from "./sync/heroSync";
 
-// Without this, an unhandled promise rejection in any async route handler
-// (e.g. a Prisma error) crashes the whole process instead of just failing
-// that one request.
 process.on("unhandledRejection", (err) => {
   console.error("Unhandled rejection:", err);
 });
@@ -17,8 +16,9 @@ app.use(express.json());
 
 app.get("/health", (_req, res) => res.json({ service: "hero-service", status: "ok" }));
 
-// TODO: mount routes here as this service is filled in
+app.use("/heroes", heroRouter);
 
 app.listen(PORT, () => {
   console.log(`hero-service listening on port ${PORT}`);
+  startHeroSyncJob();
 });

@@ -1,0 +1,52 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MemberStatus {
+  STARTER
+  SUBSTITUTE
+}
+
+enum Position {
+  GOLD
+  JUNGLE
+  MID
+  EXP
+  ROAM
+}
+
+model Team {
+  id            String   @id @default(uuid())
+  name          String   @unique
+  tag           String   @unique
+  logoUrl       String?
+  captainUserId String
+  region        String?
+  eloRating     Int      @default(1000)
+  createdAt     DateTime @default(now())
+
+  members TeamMember[]
+
+  @@map("teams")
+}
+
+// userId is @unique — a player can only be on one team at a time. Keeps the
+// "team of 6" (5 starters + 1 substitute) rule simple to enforce: no double
+// membership to worry about when counting starters/substitutes.
+model TeamMember {
+  id       String       @id @default(uuid())
+  teamId   String
+  team     Team         @relation(fields: [teamId], references: [id])
+  userId   String       @unique
+  status   MemberStatus @default(STARTER)
+  position Position?
+  joinedAt DateTime     @default(now())
+
+  @@map("team_members")
+}

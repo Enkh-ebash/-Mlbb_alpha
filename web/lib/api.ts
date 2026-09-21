@@ -7,6 +7,8 @@ export const API_HOSTS = {
   matchmaking: process.env.NEXT_PUBLIC_MATCHMAKING_URL ?? "http://localhost:4002",
   elo: process.env.NEXT_PUBLIC_ELO_URL ?? "http://localhost:4003",
   match: process.env.NEXT_PUBLIC_MATCH_URL ?? "http://localhost:4004",
+  hero: process.env.NEXT_PUBLIC_HERO_URL ?? "http://localhost:4005",
+  team: process.env.NEXT_PUBLIC_TEAM_URL ?? "http://localhost:4006",
 } as const;
 
 export class ApiError extends Error {
@@ -128,5 +130,73 @@ export const api = {
   stats: {
     usersCount: () => request<{ count: number }>(`${API_HOSTS.auth}/internal/stats/users-count`),
     matchesCount: () => request<{ count: number }>(`${API_HOSTS.match}/matches/stats/count`),
+  },
+  hero: {
+    list: () =>
+      request<
+        {
+          id: string;
+          externalId: number;
+          name: string;
+          imageUrl: string | null;
+          winRate: number | null;
+          pickRate: number | null;
+          banRate: number | null;
+        }[]
+      >(`${API_HOSTS.hero}/heroes`),
+  },
+  team: {
+    list: () =>
+      request<
+        {
+          id: string;
+          name: string;
+          tag: string;
+          captainUserId: string;
+          eloRating: number;
+          _count: { members: number };
+        }[]
+      >(`${API_HOSTS.team}/teams`),
+    get: (teamId: string) =>
+      request<{
+        id: string;
+        name: string;
+        tag: string;
+        captainUserId: string;
+        eloRating: number;
+        region: string | null;
+        members: {
+          id: string;
+          userId: string;
+          status: "STARTER" | "SUBSTITUTE";
+          position: string | null;
+        }[];
+      }>(`${API_HOSTS.team}/teams/${teamId}`),
+    create: (token: string, body: { name: string; tag: string; region?: string }) =>
+      request<{ id: string }>(`${API_HOSTS.team}/teams`, {
+        method: "POST",
+        headers: authHeader(token),
+        body: JSON.stringify(body),
+      }),
+    addMember: (
+      token: string,
+      teamId: string,
+      body: { userId: string; status?: "STARTER" | "SUBSTITUTE"; position?: string }
+    ) =>
+      request(`${API_HOSTS.team}/teams/${teamId}/members`, {
+        method: "POST",
+        headers: authHeader(token),
+        body: JSON.stringify(body),
+      }),
+    removeMember: async (token: string, teamId: string, userId: string) => {
+      const res = await fetch(`${API_HOSTS.team}/teams/${teamId}/members/${userId}`, {
+        method: "DELETE",
+        headers: authHeader(token),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new ApiError(data?.error ? JSON.stringify(data.error) : "Request failed", res.status);
+      }
+    },
   },
 };
