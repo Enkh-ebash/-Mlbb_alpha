@@ -18,4 +18,4 @@ RUN npx prisma generate
 RUN npm run build
 
 EXPOSE 4006
-CMD ["sh", "-c", "npx prisma db push --accept-data-loss --skip-generate && npm start"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]

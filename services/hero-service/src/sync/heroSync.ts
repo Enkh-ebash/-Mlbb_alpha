@@ -1,16 +1,12 @@
 import { prisma } from "../config/db";
 
-// IMPORTANT: the exact base URL for this specific API fork
-// (api-mobilelegends.vercel.app, per the project's README) could not be
-// verified from this environment — its network isn't reachable from here.
-// The field shapes below (main_heroid, main_hero.data.name,
-// main_hero_win_rate, etc.) ARE verified against a live sibling fork's
-// OpenAPI schema (rone-arena-api, same fork family, same underlying MLBB
-// data source), so the parsing logic should be correct even if the base
-// URL needs adjusting. If sync logs "0 records" or 404s, check this URL
-// first — override it with the HERO_API_BASE_URL env var without touching
-// code.
-const HERO_API_BASE_URL = process.env.HERO_API_BASE_URL || "https://api-mobilelegends.vercel.app/api";
+// The original renefosterr Vercel deployment (api-mobilelegends.vercel.app)
+// was found to be entirely taken down (DEPLOYMENT_NOT_FOUND) — this now
+// defaults to arena.rone.dev, a live sibling in the same fork family,
+// confirmed via its OpenAPI schema to use these exact field names
+// (main_heroid, main_hero.data.name, main_hero_win_rate, etc.). Override
+// with HERO_API_BASE_URL if this one also moves.
+const HERO_API_BASE_URL = process.env.HERO_API_BASE_URL || "https://arena.rone.dev/api";
 
 interface HeroRankRecord {
   data: {
