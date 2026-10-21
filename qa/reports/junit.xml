@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="38" failures="1" errors="0" time="51.423">
+    <testsuite name="tests/auth.test.ts" timestamp="2026-10-21T07:58:35.003Z" hostname="LAPTOP-09ODBRVP" tests="12" failures="0" errors="0" skipped="0" time="3.4904534">
+        <testcase classname="tests/auth.test.ts" name="auth-service &gt; амжилттай бүртгэл: токен ба хэрэглэгч буцаана" time="0.700697">
+        </testcase>
+        <testcase classname="tests/auth.test.ts" name="auth-service &gt; нууц үг хариунд ил гарахгүй" time="0.4348954">
+        </testcase>
+        <testcase classname="tests/auth.test.ts" name="auth-service &gt; давхар username/email-ийг татгалзана" time="0.3979982">
+        </testcase>
+        <testcase classname="tests/auth.test.ts" name="auth-service &gt; валидаци: богино нууц үг → 400" time="0.0077909">
+        </testcase>
+        <testcase classname="tests/auth.test.ts" name="auth-service &gt; валидаци: буруу имэйл → 400" time="0.0057586">
+        </testcase>
+        <testcase classname="tests/auth.test.ts" name="auth-service &gt; валидаци: богино username → 400" time="0.0068272">
+        </testcase>
+        <testcase classname="tests/auth.test.ts" name="auth-service &gt; валидаци: хоосон бие → 400" time="0.0073366">
+        </testcase>
+        <testcase classname="tests/auth.test.ts" name="auth-service &gt; зөв нууц үгээр нэвтэрнэ" time="0.6176429">
+        </testcase>
+        <testcase classname="tests/auth.test.ts" name="auth-service &gt; буруу нууц үгээр нэвтрэхгүй (401)" time="0.6669032">
+        </testcase>
+        <testcase classname="tests/auth.test.ts" name="auth-service &gt; /auth/me: токенгүй 401, хуурамч токен 401, зөв токен 200" time="0.323281">
+        </testcase>
+        <testcase classname="tests/auth.test.ts" name="auth-service &gt; шинэ тоглогчийн Elo = 1000" time="0.3058113">
+        </testcase>
+        <testcase classname="tests/auth.test.ts" name="auth-service &gt; leaderboard нийтэд нээлттэй, limit-ийг хүндэтгэнэ" time="0.0124437">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/health.test.ts" timestamp="2026-10-21T07:58:35.026Z" hostname="LAPTOP-09ODBRVP" tests="9" failures="0" errors="0" skipped="0" time="0.1833692">
+        <testcase classname="tests/health.test.ts" name="SMOKE: /health бүх сервис дээр &gt; auth (4001) хариу өгнө" time="0.0682246">
+        </testcase>
+        <testcase classname="tests/health.test.ts" name="SMOKE: /health бүх сервис дээр &gt; matchmaking (4002) хариу өгнө" time="0.010461">
+        </testcase>
+        <testcase classname="tests/health.test.ts" name="SMOKE: /health бүх сервис дээр &gt; elo (4003) хариу өгнө" time="0.0094932">
+        </testcase>
+        <testcase classname="tests/health.test.ts" name="SMOKE: /health бүх сервис дээр &gt; match (4004) хариу өгнө" time="0.0291663">
+        </testcase>
+        <testcase classname="tests/health.test.ts" name="SMOKE: /health бүх сервис дээр &gt; hero (4005) хариу өгнө" time="0.0191475">
+        </testcase>
+        <testcase classname="tests/health.test.ts" name="SMOKE: /health бүх сервис дээр &gt; team (4006) хариу өгнө" time="0.0125671">
+        </testcase>
+        <testcase classname="tests/health.test.ts" name="SMOKE: /health бүх сервис дээр &gt; tournament (4007) хариу өгнө" time="0.008501">
+        </testcase>
+        <testcase classname="tests/health.test.ts" name="SMOKE: /health бүх сервис дээр &gt; news (4008) хариу өгнө" time="0.0090148">
+        </testcase>
+        <testcase classname="tests/health.test.ts" name="SMOKE: /health бүх сервис дээр &gt; notification (4009) хариу өгнө" time="0.0138394">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/match-flow.test.ts" timestamp="2026-10-21T07:58:35.030Z" hostname="LAPTOP-09ODBRVP" tests="6" failures="1" errors="0" skipped="0" time="30.4566539">
+        <testcase classname="tests/match-flow.test.ts" name="matchmaking → match → голосолт → Elo (end-to-end) &gt; хоёр тоглогч хосолж, матч үүснэ" time="4.6188967">
+        </testcase>
+        <testcase classname="tests/match-flow.test.ts" name="matchmaking → match → голосолт → Elo (end-to-end) &gt; оролцогч өрөөний код оруулна" time="3.8031025">
+        </testcase>
+        <testcase classname="tests/match-flow.test.ts" name="matchmaking → match → голосолт → Elo (end-to-end) &gt; гуравдагч этгээд санал өгөх боломжгүй (403)" time="5.586547">
+        </testcase>
+        <testcase classname="tests/match-flow.test.ts" name="matchmaking → match → голосолт → Elo (end-to-end) &gt; ижил санал → автоматаар батлагдаж, Elo ялагчид нэмэгдэж, ялагдагчид буурна" time="6.0984532">
+        </testcase>
+        <testcase classname="tests/match-flow.test.ts" name="matchmaking → match → голосолт → Elo (end-to-end) &gt; хаагдсан матчид дахин санал өгөх 409" time="4.0386735">
+        </testcase>
+        <testcase classname="tests/match-flow.test.ts" name="matchmaking → match → голосолт → Elo (end-to-end) &gt; санал зөрвөл маргаан → модераторын жагсаалтад гарна" time="6.3081231">
+            <failure message="Command failed: docker compose exec -T postgres psql -U mlbb -d mlbb_play -c &quot;UPDATE auth.\&quot;User\&quot; SET role=&apos;MODERATOR&apos; WHERE username=&apos;qa_mod_mvhtldqyd&apos;;&quot;
+time=&quot;2026-10-21T14:58:14+07:00&quot; level=warning msg=&quot;C:\\Users\\Enkhmanlai\\alpha_mlbb\\-Mlbb_alpha\\docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion&quot;
+ERROR:  relation &quot;auth.User&quot; does not exist
+LINE 1: UPDATE auth.&quot;User&quot; SET role=&apos;MODERATOR&apos; WHERE username=&apos;qa_m...
+               ^
+" type="Error">
+Error: Command failed: docker compose exec -T postgres psql -U mlbb -d mlbb_play -c &quot;UPDATE auth.\&quot;User\&quot; SET role=&apos;MODERATOR&apos; WHERE username=&apos;qa_mod_mvhtldqyd&apos;;&quot;
+time=&quot;2026-10-21T14:58:14+07:00&quot; level=warning msg=&quot;C:\\Users\\Enkhmanlai\\alpha_mlbb\\-Mlbb_alpha\\docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion&quot;
+ERROR:  relation &quot;auth.User&quot; does not exist
+LINE 1: UPDATE auth.&quot;User&quot; SET role=&apos;MODERATOR&apos; WHERE username=&apos;qa_m...
+               ^
+
+ ❯ Module.promoteToModerator tests/helpers.ts:100:3
+ ❯ tests/match-flow.test.ts:64:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { status: 1, signal: null, output: [ null, { type: &apos;Buffer&apos;, data: [] }, { type: &apos;Buffer&apos;, data: [ 116, 105, 109, 101, 61, 34, 50, 48, 50, 54, 45, 49, 48, 45, 50, 49, 84, 49, 52, 58, 53, 56, 58, 49, 52, 43, 48, 55, 58, 48, 48, 34, 32, 108, 101, 118, 101, 108, 61, 119, 97, 114, 110, 105, 110, 103, 32, 109, 115, 103, 61, 34, 67, 58, 92, 92, 85, 115, 101, 114, 115, 92, 92, 69, 110, 107, 104, 109, 97, 110, 108, 97, 105, 92, 92, 97, 108, 112, 104, 97, 95, 109, 108, 98, 98, 92, 92, 45, 77, 108, 98, 98, 95, 97, 108, 112, 104, 97, 92, 92, 100, 111, 99, 107, 101, 114, 45, 99, 111, 109, 112, 111, 115, 101, 46, 121, 109, 108, 58, 32, 116, 104, 101, 32, 97, 116, 116, 114, 105, 98, 117, 116, 101, 32, 96, 118, 101, 114, 115, 105, 111, 110, 96, 32, 105, 115, 32, 111, 98, 115, 111, 108, 101, 116, 101, 44, 32, 105, 116, 32, 119, 105, 108, 108, 32, 98, 101, 32, 105, 103, 110, 111, 114, 101, 100, 44, 32, 112, 108, 101, 97, 115, 101, 32, 114, 101, 109, 111, 118, 101, 32, 105, 116, 32, 116, 111, 32, 97, 118, 111, 105, 100, 32, 112, 111, 116, 101, 110, 116, 105, 97, 108, 32, 99, 111, 110, 102, 117, 115, 105, 111, 110, 34, 10, 69, 82, 82, 79, 82, 58, 32, 32, 114, 101, 108, 97, 116, 105, 111, 110, 32, 34, 97, 117, 116, 104, 46, 85, 115, 101, 114, 34, 32, 100, 111, 101, 115, 32, 110, 111, 116, 32, 101, 120, 105, 115, 116, 10, 76, 73, 78, 69, 32, 49, 58, 32, 85, 80, 68, 65, 84, 69, 32, 97, 117, 116, 104, 46, 34, 85, 115, 101, 114, 34, 32, 83, 69, 84, 32, 114, 111, 108, 101, 61, 39, 77, 79, 68, 69, 82, 65, 84, 79, 82, 39, 32, 87, 72, 69, 82, 69, 32, 117, 115, 101, 114, 110, 97, 109, 101, 61, 39, 113, 97, 95, 109, 46, 46, 46, 10, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 94, 10 ] } ], pid: 13888, stdout: { type: &apos;Buffer&apos;, data: [] }, stderr: { type: &apos;Buffer&apos;, data: [ 116, 105, 109, 101, 61, 34, 50, 48, 50, 54, 45, 49, 48, 45, 50, 49, 84, 49, 52, 58, 53, 56, 58, 49, 52, 43, 48, 55, 58, 48, 48, 34, 32, 108, 101, 118, 101, 108, 61, 119, 97, 114, 110, 105, 110, 103, 32, 109, 115, 103, 61, 34, 67, 58, 92, 92, 85, 115, 101, 114, 115, 92, 92, 69, 110, 107, 104, 109, 97, 110, 108, 97, 105, 92, 92, 97, 108, 112, 104, 97, 95, 109, 108, 98, 98, 92, 92, 45, 77, 108, 98, 98, 95, 97, 108, 112, 104, 97, 92, 92, 100, 111, 99, 107, 101, 114, 45, 99, 111, 109, 112, 111, 115, 101, 46, 121, 109, 108, 58, 32, 116, 104, 101, 32, 97, 116, 116, 114, 105, 98, 117, 116, 101, 32, 96, 118, 101, 114, 115, 105, 111, 110, 96, 32, 105, 115, 32, 111, 98, 115, 111, 108, 101, 116, 101, 44, 32, 105, 116, 32, 119, 105, 108, 108, 32, 98, 101, 32, 105, 103, 110, 111, 114, 101, 100, 44, 32, 112, 108, 101, 97, 115, 101, 32, 114, 101, 109, 111, 118, 101, 32, 105, 116, 32, 116, 111, 32, 97, 118, 111, 105, 100, 32, 112, 111, 116, 101, 110, 116, 105, 97, 108, 32, 99, 111, 110, 102, 117, 115, 105, 111, 110, 34, 10, 69, 82, 82, 79, 82, 58, 32, 32, 114, 101, 108, 97, 116, 105, 111, 110, 32, 34, 97, 117, 116, 104, 46, 85, 115, 101, 114, 34, 32, 100, 111, 101, 115, 32, 110, 111, 116, 32, 101, 120, 105, 115, 116, 10, 76, 73, 78, 69, 32, 49, 58, 32, 85, 80, 68, 65, 84, 69, 32, 97, 117, 116, 104, 46, 34, 85, 115, 101, 114, 34, 32, 83, 69, 84, 32, 114, 111, 108, 101, 61, 39, 77, 79, 68, 69, 82, 65, 84, 79, 82, 39, 32, 87, 72, 69, 82, 69, 32, 117, 115, 101, 114, 110, 97, 109, 101, 61, 39, 113, 97, 95, 109, 46, 46, 46, 10, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 94, 10 ] } }
+            </failure>
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/matchmaking.test.ts" timestamp="2026-10-21T07:58:35.039Z" hostname="LAPTOP-09ODBRVP" tests="3" failures="0" errors="0" skipped="0" time="1.0522484">
+        <testcase classname="tests/matchmaking.test.ts" name="matchmaking-service &gt; очередь токенгүй 401" time="0.0719001">
+        </testcase>
+        <testcase classname="tests/matchmaking.test.ts" name="matchmaking-service &gt; шинэ тоглогчийн төлөв IDLE" time="0.3361301">
+        </testcase>
+        <testcase classname="tests/matchmaking.test.ts" name="matchmaking-service &gt; очередьд орно → SEARCHING, давхар орох 409, гарна → IDLE" time="0.6245325">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/security.test.ts" timestamp="2026-10-21T07:58:35.041Z" hostname="LAPTOP-09ODBRVP" tests="3" failures="0" errors="0" skipped="0" time="10.1123579">
+        <testcase classname="tests/security.test.ts" name="Аюулгүй байдал: илэрсэн дефектүүд &gt; #3: /internal/* маршрут гаднаас токен/түлхүүргүйгээр хаалттай байх ёстой" time="0.4503746">
+        </testcase>
+        <testcase classname="tests/security.test.ts" name="Аюулгүй байдал: илэрсэн дефектүүд &gt; #2: матчийн оролцогч биш хүн өрөөний кодыг өөрчилж болохгүй (403)" time="4.0778849">
+        </testcase>
+        <testcase classname="tests/security.test.ts" name="Аюулгүй байдал: илэрсэн дефектүүд &gt; #2: оролцогч биш хүн чужой матчийн мэдээллийг харж болохгүй (403)" time="5.5816167">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/team-hero.test.ts" timestamp="2026-10-21T07:58:35.043Z" hostname="LAPTOP-09ODBRVP" tests="5" failures="0" errors="0" skipped="0" time="2.4567501">
+        <testcase classname="tests/team-hero.test.ts" name="team-service &gt; баг үүсгэхэд токен шаардана (401)" time="0.0863093">
+        </testcase>
+        <testcase classname="tests/team-hero.test.ts" name="team-service &gt; баг үүсгэнэ, нэр давхцахыг татгалзана" time="0.8187091">
+        </testcase>
+        <testcase classname="tests/team-hero.test.ts" name="team-service &gt; нэг тоглогч зөвхөн нэг багт байна" time="0.3487024">
+        </testcase>
+        <testcase classname="tests/team-hero.test.ts" name="team-service &gt; капитан биш хүн гишүүн нэмж болохгүй (403)" time="1.1586107">
+        </testcase>
+        <testcase classname="tests/team-hero.test.ts" name="hero-service &gt; /heroes нийтэд нээлттэй, массив буцаана" time="0.0411341">
+        </testcase>
+    </testsuite>
+</testsuites>

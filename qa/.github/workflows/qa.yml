@@ -1,0 +1,46 @@
+name: QA (API autotests)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  api-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Бүх сервисийг ажиллуулах
+        run: docker compose up -d --build
+
+      - name: Health шалгалт хүлээх
+        run: |
+          for port in 4001 4002 4003 4004 4005 4006 4009; do
+            for i in $(seq 1 60); do
+              curl -fs http://localhost:$port/health && break
+              sleep 3
+            done
+          done
+
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+
+      - name: Тест ажиллуулах
+        working-directory: qa
+        env:
+          REPO_DIR: ..
+          PG_SERVICE: postgres
+        run: |
+          npm install
+          npm test
+
+      - name: Тайлан хадгалах
+        if: always()
+        uses: actions/upload-artifact@v4
+        with: { name: qa-junit, path: qa/reports/junit.xml }
+
+      - name: Контейнерийн лог (алдаа гарвал)
+        if: failure()
+        run: docker compose logs --tail=200
